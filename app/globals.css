@@ -1,5 +1,6 @@
 /* app/global.css */
 
+/* 1. Define Variables First */
 :root {
   /* Color palette */
   --primary-color: #333;
@@ -22,8 +23,25 @@
   /* Borders */
   --border-radius: 4px;
 
-
 }
+/* dark mode variables */
+html[data-theme="dark"] {
+  --primary-color: #60a5fa;
+  --primary-hover: #93c5fd;
+  --bg-light: #1f2937;
+  --text-light: #f9fafb;
+}
+
+
+/* 2. Dark Mode Overrides */
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) {
+    --primary-color: #60a5fa;
+    --bg-light: #1f2937;
+    /* ... other dark vars ... */
+  }
+}
+
 
 body {
   font-family: var(--font-main);
@@ -49,4 +67,25 @@ border-radius: var(--border-radius);
 
 button:hover, a button:hover {
   background: var(--primary-hover)
+}
+
+.theme-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: var(--primary-color);
+  color: var(--text-light);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+.theme-toggle:hover {
+  background: var(--primary-hover);
+  transform: scale(1.1);
+  transition: all 0.3s ease;
 }
