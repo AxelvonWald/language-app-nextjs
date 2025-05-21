@@ -10,14 +10,31 @@ h1 {
   text-align: center;
 }
 
-button {
+button, a button {
   background: #333;
   color: white;
   padding: 10px 20px;
   border: none;
   cursor: pointer;
+  font-size: 1rem;
+transition: background 0.3s ease;
 }
 
-button:hover {
+button:hover, a button:hover {
   background: #555;
 }
+
+/* Add these styles to your existing ones */
+/*
+a {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background: #333;
+  color: white;
+  text-decoration: none;
+}
+
+a:hover {
+  background: #555;
+}*/
