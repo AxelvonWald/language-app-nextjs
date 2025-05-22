@@ -89,3 +89,38 @@ button:hover, a button:hover {
   transform: scale(1.1);
   transition: all 0.3s ease;
 }
+
+/* Lesson-specific styles */
+.lesson-list {
+  list-style: none;
+  padding: 0;
+  margin: 2rem 0;
+}
+
+.lesson-link {
+  display: block;
+  padding: 1rem;
+  margin: 0.5rem 0;
+  background: var(--primary-color);
+  color: var(--text-light);
+  text-decoration: none;
+  border-radius: var(--border-radius);
+  transition: background var(--transition-speed) ease;
+}
+
+.lesson-link:hover {
+  background: var(--primary-hover);
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 2rem;
+  color: var(--primary-color);
+}
+
+.sentence-item {
+  padding: 1rem;
+  margin: 0.5rem 0;
+  background: rgba(0,0,0,0.05);
+  border-radius: var(--border-radius);
+}

@@ -1,0 +1,29 @@
+{
+  "workbench.colorTheme": "GitHub Dark Dimmed",
+  "editor.tokenColorCustomizations": {
+    "[GitHub Dark Dimmed]": {
+      "textMateRules": [
+        {
+          "scope": ["punctuation.definition.tag"],
+          "settings": { "foreground": "#57ab5a" }
+        },
+        {
+          "scope": ["entity.name.tag"],
+          "settings": { "foreground": "#6cb6ff" }
+        }
+      ]
+    }
+  },
+  "editor.semanticTokenColorCustomizations": {
+    "[GitHub Dark Dimmed]": {
+      "enabled": true,
+      "rules": {
+        "*.js": { "foreground": "#f47067" },
+        "*.jsx": { "foreground": "#dcbdfb" }
+      }
+    }
+  },
+  "editor.fontFamily": "'JetBrains Mono', 'Fira Code', monospace",
+  "editor.fontSize": 12,
+  "editor.lineHeight": 18
+}
