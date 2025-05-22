@@ -1,27 +1,23 @@
-import Link from "next/link";
+import Link from 'next/link';
+import { supabase } from '@/lib/supabase'; // ✅ make sure this exists
 
-export default function Lesson({ params }) {
-  // Temporary mock data - we'll replace with Supabase later
-  const sentences = [
-    { text: "Hello", translation: "Hola" },
-    { text: "Goodbye", translation: "Adiós" },
-  ];
+export default async function Lesson({ params }) {
+  const { id } = params; // ✅ correct way for app router
+  const lessonId = parseInt(id, 10); // convert to number if needed
+
+  const { data: sentences = [] } = await supabase
+    .from('sentences')
+    .select('*')
+    .eq('lesson_id', lessonId); // ✅ provide the value
 
   return (
     <main>
-      <Link href="/" className="back-link">
-        ← Back to Lessons
-      </Link>
-
-      <h1>Lesson {params.id}</h1>
-
+      <Link href="/" className="back-link">← Back to Modules</Link>
+      <h1>Lesson {lessonId}</h1>
       <ul className="sentence-list">
-        {sentences.map((sentence, index) => (
-          <li key={index} className="sentence-item">
-            <p>
-              <span className="original">{sentence.text}</span> →
-              <span className="translation">{sentence.translation}</span>
-            </p>
+        {sentences.map((sentence) => (
+          <li key={sentence.id}>
+            <p>{sentence.text} → {sentence.translation}</p>
           </li>
         ))}
       </ul>

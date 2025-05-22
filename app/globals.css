@@ -217,4 +217,36 @@ html[data-theme="dark"] {
 
 .module .lesson-link:hover {
   background: rgba(0,0,0,0.1);
+
+
+}
+
+.debug-output {
+  background: rgba(0,0,0,0.1);
+  padding: 1rem;
+  border-radius: 4px;
+  font-family: monospace;
+  margin-top: 2rem;
+  white-space: pre-wrap;
+}
+
+/* Lesson Page Styles */
+.back-link {
+  display: inline-block;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.sentence-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+.sentence-list li {
+  padding: 0.5rem;
+  margin: 0.5rem 0;
+  background: rgba(0,0,0,0.05);
+  border-radius: 4px;
 }
