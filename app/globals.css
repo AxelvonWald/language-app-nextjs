@@ -123,3 +123,98 @@ a button:hover {
   background: rgba(0, 0, 0, 0.05);
   border-radius: var(--border-radius);
 }
+
+/* Enhanced dark mode variables */
+html[data-theme="dark"] {
+  --bg-light: #1e1e2e; /* Softer dark blue */
+  --text-light: #f0f0f0; /* Warmer white */
+  --sentence-bg: #2a2a3a; /* Card-like contrast */
+}
+
+/* Lesson list improvements */
+.lesson-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.lesson-link {
+  padding: 1.2rem;
+  margin: 0;
+  border-left: 4px solid var(--primary-color);
+}
+
+/* Sentence cards */
+.sentence-item {
+  background: var(--sentence-bg);
+  padding: 1.2rem;
+  margin: 0.8rem 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.sentence-item p {
+  display: flex;
+  gap: 1rem;
+}
+
+.original {
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.translation {
+  opacity: 0.9;
+}
+
+/* Module Styling */
+.module {
+  background: var(--sentence-bg);
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.module-header {
+  padding: 1.2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  list-style: none; /* Removes default arrow */
+}
+
+.module-header:hover {
+  background: rgba(0,0,0,0.1);
+}
+
+.dropdown-icon {
+  transition: transform 0.3s ease;
+}
+
+.module[open] .dropdown-icon {
+  transform: rotate(180deg);
+}
+
+/* Nested Lesson List */
+.module .lesson-list {
+  grid-template-columns: 1fr;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.module .lesson-link {
+  border-left: none;
+  border-radius: 0;
+  margin: 0;
+  padding: 1rem 1.2rem 1rem 2rem;
+  background: rgba(0,0,0,0.05);
+}
+
+.module .lesson-link:hover {
+  background: rgba(0,0,0,0.1);
+}
