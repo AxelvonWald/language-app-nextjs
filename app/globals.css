@@ -6,23 +6,22 @@
   --primary-color: #333;
   --primary-hover: #555;
   --text-light: white;
-  
+
   /* Spacing */
   --button-padding: 10px 20px;
   --body-padding: 20px;
-  
+
   /* Animation */
   --transition-speed: 0.5s;
 
-    /* Typography */
+  /* Typography */
   --font-main: Arial, sans-serif;
-  
+
   /* Backgrounds */
   --bg-light: #f4f4f4;
-  
+
   /* Borders */
   --border-radius: 4px;
-
 }
 /* dark mode variables */
 html[data-theme="dark"] {
@@ -32,7 +31,6 @@ html[data-theme="dark"] {
   --text-light: #f9fafb;
 }
 
-
 /* 2. Dark Mode Overrides */
 @media (prefers-color-scheme: dark) {
   html:not([data-theme="light"]) {
@@ -41,7 +39,6 @@ html[data-theme="dark"] {
     /* ... other dark vars ... */
   }
 }
-
 
 body {
   font-family: var(--font-main);
@@ -54,19 +51,21 @@ h1 {
   text-align: center;
 }
 
-button, a button {
+button,
+a button {
   background: var(--primary-color);
   color: var(--text-light);
- padding: var(--button-padding); 
+  padding: var(--button-padding);
   border: none;
   cursor: pointer;
   font-size: 1rem;
-transition: background var(--transition-speed) ease;
-border-radius: var(--border-radius);
+  transition: background var(--transition-speed) ease;
+  border-radius: var(--border-radius);
 }
 
-button:hover, a button:hover {
-  background: var(--primary-hover)
+button:hover,
+a button:hover {
+  background: var(--primary-hover);
 }
 
 .theme-toggle {
@@ -121,6 +120,6 @@ button:hover, a button:hover {
 .sentence-item {
   padding: 1rem;
   margin: 0.5rem 0;
-  background: rgba(0,0,0,0.05);
+  background: rgba(0, 0, 0, 0.05);
   border-radius: var(--border-radius);
 }
