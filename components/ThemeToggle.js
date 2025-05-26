@@ -1,18 +1,20 @@
+// components/ThemeToggle.js
 'use client'
+
 import { Moon, Sun } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 export default function ThemeToggle() {
   const [darkMode, setDarkMode] = useState(false)
 
-  // 1. Load saved theme on startup
+  // Load saved theme on startup
   useEffect(() => {
     const saved = localStorage.getItem('theme') || 'light'
     setDarkMode(saved === 'dark')
     document.documentElement.setAttribute('data-theme', saved)
   }, [])
 
-  // 2. Toggle between themes
+  // Toggle between themes
   const handleClick = () => {
     const newMode = !darkMode
     setDarkMode(newMode)
