@@ -1,29 +1,50 @@
 import './globals.css'
-import { Inter } from 'next/font/google'
-import ThemeToggle from '@/components/ThemeToggle' // Make sure this path is correct
-
-const inter = Inter({ subsets: ['latin'] })
+import ThemeToggle from '@/components/ThemeToggle'
+import LanguageSwitcher from '@/components/LanguageSwitcher'
 
 export const metadata = {
   title: 'Language Learner',
-  description: 'Learn languages effectively',
 }
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        {/* Add ThemeToggle inside your header */}
+      <body style={{
+        margin: 0,
+        fontFamily: '-apple-system, sans-serif',
+        backgroundColor: 'var(--bg-color)',
+        color: 'var(--text-color)',
+        minHeight: '100vh'
+      }}>
         <header style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
+          backgroundColor: 'var(--header-bg)',
+          padding: '1rem',
+          borderBottom: '1px solid var(--border-color)',
+          position: 'sticky',
+          top: 0
+        }}>
+          <div style={{
+            maxWidth: '900px',
+            margin: '0 auto',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}>
+            <h1>Language Learner</h1>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <LanguageSwitcher />
+              <ThemeToggle />
+            </div>
+          </div>
+        </header>
+        
+        <main style={{
+          maxWidth: '900px',
+          margin: '0 auto',
           padding: '1rem'
         }}>
-          <h1>Language Learner</h1>
-          <ThemeToggle /> {/* This line was missing */}
-        </header>
-        {children}
+          {children}
+        </main>
       </body>
     </html>
   )
