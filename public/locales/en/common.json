@@ -1,0 +1,11 @@
+{
+  "lesson": {
+    "start": "Start Lesson",
+    "next": "Next",
+    "back": "Back"
+  },
+  "language": {
+    "target": "Spanish",
+    "native": "English"
+  }
+}

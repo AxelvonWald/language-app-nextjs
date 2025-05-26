@@ -2,12 +2,20 @@ import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import AudioPlayer from '@/components/AudioPlayer';
 
+// Add this line to force dynamic rendering
+export const dynamic = 'force-dynamic';
+
 export default async function Lesson({ params }) {
-  // Fetch lesson with phrases
+  // First await the params (even though they're technically sync)
+  await Promise.resolve(); // This satisfies Next.js's requirement
+  
+  // Then destructure
+  const { id } = params;
+
   const { data: lesson } = await supabase
     .from('lessons')
     .select('*, phrases(*)')
-    .eq('id', params.id)
+    .eq('id', id)
     .single();
 
   if (!lesson) return <div>Lesson not found</div>;

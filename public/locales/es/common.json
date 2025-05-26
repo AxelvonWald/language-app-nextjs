@@ -1,0 +1,11 @@
+{
+  "lesson": {
+    "start": "Comenzar lección",
+    "next": "Siguiente",
+    "back": "Atrás"
+  },
+  "language": {
+    "target": "Español",
+    "native": "Inglés"
+  }
+}
