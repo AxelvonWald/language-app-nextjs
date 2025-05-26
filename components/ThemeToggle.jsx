@@ -1,30 +1,32 @@
-'use client'; // Required for client-side interactivity
-
-import { useEffect, useState } from 'react';
+'use client'
+import { Moon, Sun } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState('light');
+  const [darkMode, setDarkMode] = useState(false)
 
-  // 1. Read system preference and initialize theme
   useEffect(() => {
-    const storedTheme = localStorage.getItem('theme') || 
-                      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    setTheme(storedTheme);
-  }, []);
+    const savedTheme = localStorage.getItem('theme') || 
+                      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+    setDarkMode(savedTheme === 'dark')
+    document.documentElement.setAttribute('data-theme', savedTheme)
+  }, [])
 
-  // 2. Apply theme class to HTML element
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme(prev => prev === 'light' ? 'dark' : 'light');
-  };
+  const handleToggle = () => {
+    const newMode = !darkMode
+    setDarkMode(newMode)
+    const theme = newMode ? 'dark' : 'light'
+    localStorage.setItem('theme', theme)
+    document.documentElement.setAttribute('data-theme', theme)
+  }
 
   return (
-    <button onClick={toggleTheme} className="theme-toggle">
-      {theme === 'light' ? '🌙' : '☀️'}
+    <button
+      onClick={handleToggle}
+      aria-label={`Switch to ${darkMode ? 'light' : 'dark'} mode`}
+      className="theme-toggle"
+    >
+      {darkMode ? <Moon size={20} /> : <Sun size={20} />}
     </button>
-  );
+  )
 }

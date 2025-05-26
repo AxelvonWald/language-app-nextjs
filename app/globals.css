@@ -250,3 +250,59 @@ html[data-theme="dark"] {
   background: rgba(0,0,0,0.05);
   border-radius: 4px;
 }
+
+:root {
+  /* Light theme defaults */
+  --bg-color: #ffffff;
+  --text-color: #000000;
+  --header-bg: #f8f9fa;
+}
+
+[data-theme="dark"] {
+  /* Dark theme overrides */
+  --bg-color: #1a1a1a;
+  --text-color: #ffffff;
+  --header-bg: #2d2d2d;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+header {
+  background-color: var(--header-bg);
+}
+
+.theme-toggle-button {
+  padding: 8px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+}
+
+.theme-toggle-button:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .theme-toggle-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.theme-toggle {
+  padding: 8px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.theme-toggle:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
