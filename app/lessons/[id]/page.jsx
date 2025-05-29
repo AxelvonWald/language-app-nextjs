@@ -33,7 +33,7 @@ export default function LessonPage({ params }) {
 
   return (
     <main className="p-4 max-w-2xl mx-auto">
-      <BackButton href="/modules" label="← Lessons" />
+      <BackButton href="/lessons" label="← Lessons" />
       <h1 className="text-2xl font-bold my-6">{lesson.title}</h1>
 
       {lesson.lesson_sections.map((section) => (
