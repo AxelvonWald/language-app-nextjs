@@ -52,6 +52,7 @@ export async function GET(request, { params }) {
         .sort((a, b) => a.order_index - b.order_index)
         .map(ss => ss.sentences), // ss.sentences is a single object
     }))
+    .sort((a, b) => a.order_index - b.order_index),
   }
 
   return new Response(JSON.stringify(lessonWithSentences), {
