@@ -17,6 +17,11 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
+    "baseUrl": ".",                   // <---- Add this line here
+    "paths": {                       // <---- And add this block here
+      "@/*": ["./*"],
+      "@components/*": ["components/*"]
+    },
     "plugins": [
       {
         "name": "next"

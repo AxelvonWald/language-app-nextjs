@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import AudioPlayer from '@/components/AudioPlayer'
+import AudioPlayer from '@components/AudioPlayer'
 import BackButton from '@/components/BackButton'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
