@@ -1,39 +1,36 @@
-// app/lessons/[id]/page.jsx
+// app/courses/[id]/lessons/[lesson_id]/page.jsx
 'use client'
 
 import { useEffect, useState } from 'react'
-import BackButton from '@/components/BackButton'
+import Link from 'next/link'
 import AudioPlayer from '@/components/AudioPlayer'
+import BackButton from '@/components/BackButton'
 
 export default function LessonPage({ params }) {
+  const { id, lesson_id } = params
   const [lesson, setLesson] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function fetchLesson() {
-      const res = await fetch(`/api/lessons/${params.id}`)
+      const res = await fetch(`/api/lessons/${lesson_id}?course_id=${id}`)
       const data = await res.json()
 
-      console.log('API Response:', data) // 👈 Debugging
-
-      if (data && data.lesson_sections) {
+      if (data.lesson_sections) {
         setLesson(data)
         setLoading(false)
-      } else {
-        setLoading(false)
-        console.error('No lesson sections found:', data)
       }
     }
 
     fetchLesson()
-  }, [params.id])
+  }, [id, lesson_id])
 
-  if (loading) return <div>Loading...</div>
+  if (loading) return <div>Loading lesson...</div>
   if (!lesson) return <div>Lesson not found</div>
 
   return (
     <main className="p-4 max-w-2xl mx-auto">
-      <BackButton href="/lessons" label="← Lessons" />
+      <BackButton href={`/courses/${id}/lessons`} label="← Lessons" />
       <h1 className="text-2xl font-bold my-6">{lesson.title}</h1>
 
       {lesson.lesson_sections.map((section) => (
@@ -42,10 +39,10 @@ export default function LessonPage({ params }) {
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{section.instructions}</p>
 
           {/* Audio Player */}
-          {section.audio_file_id && <AudioPlayer path={`/audio/${section.audio_file_id}`} />}
+          {section.audio_file_id && <AudioPlayer path={`/audio/${section.audio_file_id}.wav`} />}
 
           {/* Sentences Table */}
-          {section.sentences.length > 0 && (
+          {section.sentences?.length > 0 && (
             <div className="mt-4 overflow-x-auto">
               <table className="min-w-full table-auto border-collapse">
                 <thead>
