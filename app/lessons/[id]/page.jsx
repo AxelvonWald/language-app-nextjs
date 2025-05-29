@@ -44,15 +44,35 @@ export default function LessonPage({ params }) {
           {/* Audio Player */}
           {section.audio_file_id && <AudioPlayer path={`/audio/${section.audio_file_id}`} />}
 
-          {/* Sentences List */}
-          <ul className="mt-4 space-y-2">
-            {section.sentences.map(sentence => (
-              <li key={sentence.id} className="border-b pb-2">
-                {section.show_native && <div><strong>{sentence.native_text}</strong></div>}
-                {section.show_target && <div>{sentence.target_text}</div>}
-              </li>
-            ))}
-          </ul>
+          {/* Sentences Table */}
+          {section.sentences.length > 0 && (
+            <div className="mt-4 overflow-x-auto">
+              <table className="min-w-full table-auto border-collapse">
+                <thead>
+                  <tr className="bg-gray-100 dark:bg-gray-700">
+                    {section.show_native && <th className="px-4 py-2 text-left">Native</th>}
+                    {section.show_target && <th className="px-4 py-2 text-left">Target</th>}
+                  </tr>
+                </thead>
+                <tbody>
+                  {section.sentences.map(sentence => (
+                    <tr key={sentence.id} className="border-b dark:border-gray-600">
+                      {section.show_native && (
+                        <td className="px-4 py-2">
+                          <strong>{sentence.native_text}</strong>
+                        </td>
+                      )}
+                      {section.show_target && (
+                        <td className="px-4 py-2">
+                          {sentence.target_text}
+                        </td>
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </section>
       ))}
     </main>
