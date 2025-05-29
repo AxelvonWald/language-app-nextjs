@@ -8,23 +8,28 @@ export default function LessonListPage({ params }) {
   const { id: course_id } = params
   const [lessons, setLessons] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null) // Add error state
 
   useEffect(() => {
     async function fetchLessons() {
-      const res = await fetch(`/api/lessons?course_id=${course_id}`)
-      const data = await res.json()
-
-      if (data) {
-        setLessons(data)
+      try {
+        const res = await fetch(`/api/lessons?course_id=${course_id}`)
+        if (!res.ok) throw new Error('Failed to fetch')
+        const data = await res.json()
+        setLessons(data || []) // Ensure data is always an array
+      } catch (err) {
+        setError(err.message) // Store error
+      } finally {
+        setLoading(false)
       }
-
-      setLoading(false)
     }
 
     fetchLessons()
   }, [course_id])
 
   if (loading) return <div>Loading lessons...</div>
+  if (error) return <div>Error: {error}</div> // Show errors
+  if (!lessons.length) return <div>No lessons found</div> // Handle empty state
 
   return (
     <main className="p-4 max-w-2xl mx-auto">
