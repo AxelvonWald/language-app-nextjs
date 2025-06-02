@@ -41,9 +41,9 @@ body {
 
 /* MAIN CONTAINER */
 .container {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 1rem;
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
 }
 
 /* MODULE CARD */
@@ -210,4 +210,50 @@ body {
 .module-card:hover {
   background-color: var(--hover-bg);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 20px;
+  text-decoration: none;
+  font-weight: 600;
+  color: var(--link-color);
+}
+
+.lesson-section {
+  margin-bottom: 30px;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.section-instructions {
+  margin-bottom: 16px;
+  color: var(--text-color);
+}
+
+.audio-player {
+  margin-bottom: 20px;
+}
+
+.sentence-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.sentence-table th,
+.sentence-table td {
+  text-align: left;
+  padding: 8px;
+}
+.sentence-table tr {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.sentence-table thead tr {
+  border-bottom: 2px solid var(--border-color);
 }
