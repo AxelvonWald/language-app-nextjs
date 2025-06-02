@@ -257,3 +257,165 @@ body {
 .sentence-table thead tr {
   border-bottom: 2px solid var(--border-color);
 }
+
+.container {
+  max-width: 768px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 1rem;
+  color: #2563eb;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+}
+
+.modules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.module-box {
+  background: white;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  color: #111;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.module-box:hover {
+  background-color: #e0f0ff;
+}
+
+.container {
+  max-width: 768px; /* or 800px if you prefer */
+  margin: 2rem auto;
+  padding: 1rem 1.5rem;
+}
+
+/* Add this to your existing globals.css */
+
+/* Unified Container Styles */
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+/* Unified Page Title */
+.page-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+/* Unified Back Link */
+.back-link {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  color: var(--text-color);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.back-link:hover {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+/* Unified Card List/Grid */
+.course-list,
+.modules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Unified Card Styles */
+.course-card,
+.module-box {
+  display: block;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1.5rem;
+  color: var(--text-color);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.course-card:hover,
+.module-box:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: var(--hover-bg);
+}
+
+/* Unified Title Styles */
+.course-title,
+.module-box h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+/* Unified Description Styles */
+.course-description,
+.module-box p {
+  font-size: 0.95rem;
+  color: var(--text-color);
+  opacity: 0.8;
+  line-height: 1.5;
+}
+
+/* Add to your existing globals.css */
+
+/* Empty State Card */
+.course-card > p {
+  margin: 0;
+  color: var(--text-color);
+  opacity: 0.7;
+}
+
+/* Ensure consistent link styling */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Add this to your existing globals.css */
+.back-link {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  color: var(--text-color); /* Uses your theme variable */
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.back-link:hover {
+  color: var(--text-color); /* Keeps same color on hover */
+  text-decoration: underline;
+  opacity: 0.9; /* Optional: slight fade effect */
+}
+
+/* OR if you want a more subtle change: */
+.back-link:hover {
+  color: var(--text-color);
+  text-decoration: underline;
+  text-decoration-color: var(--border-color); /* Uses your border color */
+}

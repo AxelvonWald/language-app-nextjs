@@ -1,15 +1,13 @@
-'use client'
-export default function LanguageSwitcher() {
+// components/BackButton.jsx
+import Link from 'next/link'
+
+export default function BackButton({ href, children }) {
   return (
-    <div style={{
-      display: 'flex',
-      gap: '5px',
-      background: 'var(--header-bg)',
-      padding: '5px',
-      borderRadius: '4px'
-    }}>
-      <button style={{ padding: '5px 10px' }}>EN</button>
-      <button style={{ padding: '5px 10px' }}>ES</button>
-    </div>
+    <Link 
+      href={href}
+      className="back-link"
+    >
+      ← {children || 'Back'}
+    </Link>
   )
 }

@@ -1,4 +1,3 @@
-// app/courses/[id]/page.jsx
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -24,40 +23,33 @@ export default function CourseLessonsPage({ params }) {
     fetchCourse()
   }, [id])
 
-  if (loading) return <div className="p-4">Loading...</div>
-  if (!course) return <div className="p-4">Course not found</div>
+  if (loading) return <div className="container p-4">Loading...</div>
+  if (!course) return <div className="container p-4">Course not found</div>
 
   return (
-    <main className="p-6 max-w-3xl mx-auto">
+    <main className="course_card">
       {/* Course Title */}
-      <h1 className="text-3xl font-bold mb-6">{course.title}</h1>
+      <h1 className="page-title">{course.title}</h1>
 
       {/* Back Button */}
-      <Link
-        href="/courses"
-        className="text-blue-600 hover:underline mb-4 block"
-      >
+      <Link href="/courses" className="back-link">
         ← Back to courses
       </Link>
 
       {/* Lesson List */}
-      <h2 className="text-2xl font-semibold mb-4">Select a Lesson</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <h2 className="section-title">Select a Lesson</h2>
+      <div className="modules-grid">
         {course.lessons.map((lesson) => (
-          <div
+          <Link
             key={lesson.id}
-            className="bg-white dark:bg-gray-800 p-4 border rounded-md shadow-sm hover:shadow-lg transition-shadow"
+            href={`/courses/${id}/lessons/${lesson.id}`}
+            className="course-card"
           >
-            <Link
-              href={`/courses/${id}/lessons/${lesson.id}`}
-              className="block text-lg font-semibold"
-            >
-              {lesson.title}
-            </Link>
-            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            <h3 className="lesson-title">{lesson.title}</h3>
+            <p className="lesson-description">
               {lesson.description || `Lesson ${lesson.order_index}`}
             </p>
-          </div>
+          </Link>
         ))}
       </div>
     </main>

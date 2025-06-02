@@ -1,14 +1,18 @@
-// app/api/lessons/route.js
 import { supabase } from '@/lib/supabase'
 
 export async function GET(request) {
   const url = new URL(request.url)
   const course_id = url.searchParams.get('course_id')
+  const module_id = url.searchParams.get('module_id') // get module_id too
 
   let query = supabase.from('lessons').select('id, title, description, order_index')
 
   if (course_id) {
     query = query.eq('course_id', course_id)
+  }
+
+  if (module_id) {
+    query = query.eq('module_id', module_id)  // filter by module_id!
   }
 
   const { data, error } = await query.order('order_index')
