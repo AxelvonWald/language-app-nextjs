@@ -3,7 +3,7 @@
   /* Light Theme */
   --bg-color: #ffffff;
   --header-bg: #f5f5f5;
-  --card-bg: #f5f5f5;
+  --card-bg: #ffffff;
   --text-color: #222222;
   --border-color: #e0e0e0;
   --hover-bg: #eaeaea;
@@ -11,12 +11,12 @@
 
 [data-theme="dark"] {
   /* Dark Theme */
-  --bg-color: #1a1a1a;
-  --header-bg: #2d2d2d;
-  --card-bg: #2d2d2d;
-  --text-color: #f5f5f5;
-  --border-color: #444444;
-  --hover-bg: #eaeaea38;
+  --bg-color: #121212;
+  --header-bg: #1f1f1f;
+  --card-bg: #1e1e1e;
+  --text-color: #eeeeee;
+  --border-color: #333333;
+  --hover-bg: #2a2a2a;
 }
 
 /* ===== BASIC LAYOUT ===== */
@@ -29,29 +29,37 @@ body {
   min-height: 100vh;
 }
 
+/* HEADER */
 .header {
   background: var(--header-bg);
   padding: 1rem;
   border-bottom: 1px solid var(--border-color);
   position: sticky;
   top: 0;
+  color: var(--text-color);
 }
 
+/* MAIN CONTAINER */
 .container {
   max-width: 900px;
   margin: 0 auto;
   padding: 1rem;
 }
 
+/* MODULE CARD */
 .module {
+  background-color: var(--card-bg);
+  color: var(--text-color);
   border: 1px solid var(--border-color);
   border-radius: 8px;
   margin-bottom: 1rem;
   overflow: hidden;
 }
 
+/* MODULE HEADER */
 .module-header {
   background-color: var(--card-bg);
+  color: var(--text-color);
   padding: 1rem;
   font-weight: bold;
   cursor: pointer;
@@ -62,19 +70,18 @@ body {
 }
 
 .module-header:hover {
-  background-color: var(--hover-bg, #eaeaea);
+  background-color: var(--hover-bg);
 }
 
-
+/* DROPDOWN ICON ROTATION */
 .dropdown-icon {
   transition: transform 0.2s ease;
 }
-
-/* Rotate icon when open */
 .module[open] .dropdown-icon {
   transform: rotate(180deg);
 }
 
+/* LESSON LIST */
 .lesson-list {
   list-style: none;
   margin: 0;
@@ -85,19 +92,122 @@ body {
 .lesson-list li {
   border-top: 1px solid var(--border-color);
 }
-
 .lesson-list li:first-child {
   border-top: none;
 }
 
+/* LESSON LINK */
 .lesson-link {
   display: block;
   padding: 1rem;
   text-decoration: none;
   color: var(--text-color);
+  background-color: var(--card-bg);
   transition: background-color 0.2s ease;
 }
-
 .lesson-link:hover {
+  background-color: var(--hover-bg);
+}
+
+.page-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.lesson-card {
+  display: block;
+  border: 1px solid var(--border-color);
+  padding: 16px;
+  border-radius: 8px;
   background-color: var(--card-bg);
+  color: var(--text-color);
+  text-decoration: none;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s, background-color 0.3s;
+}
+
+.lesson-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: var(--hover-bg);
+}
+
+.lesson-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.lesson-description {
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: var(--text-color);
+}
+
+.container {
+  padding: 20px;
+  max-width: 800px;
+  margin: auto;
+}
+
+.page-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.course-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.course-card {
+  display: block;
+  text-decoration: none;
+  color: var(--text-color);
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  padding: 16px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.course-card:hover {
+  background-color: var(--hover-bg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.course-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.course-description {
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: var(--text-color);
+}
+
+.module-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.module-card {
+  display: block;
+  text-decoration: none;
+  color: var(--text-color);
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  padding: 16px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.module-card:hover {
+  background-color: var(--hover-bg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }

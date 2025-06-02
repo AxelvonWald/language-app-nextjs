@@ -1,8 +1,10 @@
-/* components/Navbar.module.css */
+.header {
+  background: var(--header-bg);
+  border-bottom: 1px solid var(--border-color);
+  padding: 1rem;
+}
 
 .nav {
-  background-color: #f0f0f0;
-  padding: 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -10,18 +12,29 @@
 
 .logo {
   font-weight: bold;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
 }
 
-.links {
+.navLinks {
   list-style: none;
   display: flex;
   gap: 1rem;
+  align-items: center;
   margin: 0;
   padding: 0;
 }
 
-.links li a {
+.navLinks li a {
+  color: var(--text-color);
   text-decoration: none;
-  color: #333;
+}
+
+.toggle {
+  background: none;
+  border: 1px solid var(--text-color);
+  padding: 0.5rem 0.75rem;
+  border-radius: 5px;
+  cursor: pointer;
+  color: var(--text-color);
+  transition: background 0.3s, color 0.3s;
 }

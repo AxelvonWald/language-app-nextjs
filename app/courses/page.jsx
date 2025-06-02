@@ -22,30 +22,18 @@ export default function CoursesPage() {
   if (loading) return <p>Loading courses...</p>
 
   return (
-    <main style={{ padding: '20px', maxWidth: '800px', margin: 'auto' }}>
-      <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '20px' }}>
-        Select Your Course
-      </h1>
+    <main className="container">
+      <h1 className="page-title">Select Your Course</h1>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      <div className="course-list">
         {courses.map((course) => (
           <Link
             key={course.id}
             href={`/courses/${course.id}/lessons`}
-            style={{
-              textDecoration: 'none',
-              color: 'inherit',
-              border: '1px solid #ddd',
-              padding: '16px',
-              borderRadius: '8px',
-              backgroundColor: '#f9f9f9',
-              transition: 'background-color 0.2s'
-            }}
+            className="course-card"
           >
-            <h2 style={{ fontSize: '1.25rem', fontWeight: '600' }}>
-              {course.title}
-            </h2>
-            <p style={{ marginTop: '8px', fontSize: '0.9rem', color: '#666' }}>
+            <h2 className="course-title">{course.title}</h2>
+            <p className="course-description">
               {course.description || 'Beginner level'}
             </p>
           </Link>
