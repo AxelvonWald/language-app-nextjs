@@ -4,53 +4,62 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 
-export default function CourseDetailPage({ params }) {
+export default function CourseLessonsPage({ params }) {
   const { id } = params
   const [course, setCourse] = useState(null)
-  const [lessons, setLessons] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    async function fetchCourseData() {
-      const courseRes = await fetch(`/api/courses/${id}`)
-      const lessonsRes = await fetch(`/api/lessons?course_id=${id}`)
+    async function fetchCourse() {
+      const res = await fetch(`/api/courses/${id}`)
+      const data = await res.json()
 
-      const courseData = await courseRes.json()
-      const lessonsData = await lessonsRes.json()
+      if (data) {
+        setCourse(data)
+      }
 
-      setCourse(courseData)
-      setLessons(lessonsData)
       setLoading(false)
     }
 
-    fetchCourseData()
+    fetchCourse()
   }, [id])
 
-  if (loading) return <div>Loading...</div>
-  if (!course) return <div>Course not found</div>
+  if (loading) return <div className="p-4">Loading...</div>
+  if (!course) return <div className="p-4">Course not found</div>
 
   return (
-    <main className="p-4 max-w-2xl mx-auto">
-      <Link href="/courses" className="text-blue-600 hover:underline mb-4 block">
+    <main className="p-6 max-w-3xl mx-auto">
+      {/* Course Title */}
+      <h1 className="text-3xl font-bold mb-6">{course.title}</h1>
+
+      {/* Back Button */}
+      <Link
+        href="/courses"
+        className="text-blue-600 hover:underline mb-4 block"
+      >
         ← Back to courses
       </Link>
 
-      <h1 className="text-2xl font-bold mb-6">Lessons in "{course.title}"</h1>
-
-      <ul className="space-y-2">
-        {lessons.map((lesson) => (
-          <li key={lesson.id}>
+      {/* Lesson List */}
+      <h2 className="text-2xl font-semibold mb-4">Select a Lesson</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        {course.lessons.map((lesson) => (
+          <div
+            key={lesson.id}
+            className="bg-white dark:bg-gray-800 p-4 border rounded-md shadow-sm hover:shadow-lg transition-shadow"
+          >
             <Link
               href={`/courses/${id}/lessons/${lesson.id}`}
-              className="block p-4 border rounded bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"
+              className="block text-lg font-semibold"
             >
-              <strong>{lesson.title}</strong>
-              <br />
-              <small className="text-gray-600">{lesson.description || `Lesson ${lesson.order_index}`}</small>
+              {lesson.title}
             </Link>
-          </li>
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              {lesson.description || `Lesson ${lesson.order_index}`}
+            </p>
+          </div>
         ))}
-      </ul>
+      </div>
     </main>
   )
 }

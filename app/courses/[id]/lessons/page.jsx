@@ -1,58 +1,60 @@
 // app/courses/[id]/lessons/page.jsx
 'use client'
 
+import React from 'react'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 
 export default function LessonListPage({ params }) {
-  const { id: course_id } = params
+  const { id: course_id } = React.use(params)
   const [lessons, setLessons] = useState([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null) // Add error state
 
   useEffect(() => {
     async function fetchLessons() {
-      try {
-        const res = await fetch(`/api/lessons?course_id=${course_id}`)
-        if (!res.ok) throw new Error('Failed to fetch')
-        const data = await res.json()
-        setLessons(data || []) // Ensure data is always an array
-      } catch (err) {
-        setError(err.message) // Store error
-      } finally {
-        setLoading(false)
-      }
+      const res = await fetch(`/api/lessons?course_id=${course_id}`)
+      const data = await res.json()
+      setLessons(data)
+      setLoading(false)
     }
 
     fetchLessons()
   }, [course_id])
 
   if (loading) return <div>Loading lessons...</div>
-  if (error) return <div>Error: {error}</div> // Show errors
-  if (!lessons.length) return <div>No lessons found</div> // Handle empty state
+  if (!lessons.length) return <div>No lessons found</div>
 
   return (
-    <main className="p-4 max-w-2xl mx-auto">
-      <Link href="/courses" className="text-blue-600 hover:underline mb-4 block">
-        ← Back to courses
-      </Link>
+    <main style={{ padding: '20px', maxWidth: '800px', margin: 'auto' }}>
+      {/* Removed redundant "Back to Course" link */}
 
-      <h1 className="text-2xl font-bold mb-6">Select a Lesson</h1>
+      <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '20px' }}>
+        Lessons in Course {course_id}
+      </h1>
 
-      <ul className="space-y-2">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         {lessons.map((lesson) => (
-          <li key={lesson.id}>
-            <Link
-              href={`/courses/${course_id}/lessons/${lesson.id}`}
-              className="block p-4 border rounded-md bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"
-            >
-              <strong>{lesson.title}</strong>
-              <br />
-              <small className="text-gray-600">{lesson.description || `Lesson ${lesson.order_index}`}</small>
-            </Link>
-          </li>
+          <Link
+            key={lesson.id}
+            href={`/courses/${course_id}/lessons/${lesson.id}`}
+            style={{
+              textDecoration: 'none',
+              color: 'inherit',
+              border: '1px solid #ccc',
+              padding: '16px',
+              borderRadius: '8px',
+              backgroundColor: '#fff',
+              boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
+              transition: 'box-shadow 0.2s'
+            }}
+          >
+            <h2 style={{ fontSize: '1.25rem', fontWeight: '600' }}>{lesson.title}</h2>
+            <p style={{ marginTop: '8px', fontSize: '0.9rem', color: '#555' }}>
+              {lesson.description || `Lesson ${lesson.order_index}`}
+            </p>
+          </Link>
         ))}
-      </ul>
+      </div>
     </main>
   )
 }

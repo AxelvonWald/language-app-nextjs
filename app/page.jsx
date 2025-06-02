@@ -1,24 +1,38 @@
 // app/page.jsx
-'use client'
-
 import Link from 'next/link'
-
-export default function HomePage() {
+export default function Home() {
   return (
-    <main className="p-4 max-w-md mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Welcome</h1>
-      <p className="mb-6 text-gray-700 dark:text-gray-300">
+    <main style={{ padding: '20px', maxWidth: '800px', margin: 'auto' }}>
+      <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '20px' }}>
+        Welcome
+      </h1>
+      <p style={{ fontSize: '1.1rem', color: '#555', marginBottom: '20px' }}>
         Choose a language pair to begin learning.
       </p>
-
-      <ul className="space-y-2">
+      <ul style={{ listStyleType: 'none', padding: 0 }}>
         <li>
-          <Link href="/courses/1/lessons" className="block p-4 border rounded hover:bg-gray-50 dark:hover:bg-gray-800">
+          <Link
+            href="/courses"
+            style={{
+              textDecoration: 'none',
+              color: '#0070f3',
+              fontWeight: '600',
+              marginBottom: '10px'
+            }}
+          >
             English to Spanish
           </Link>
         </li>
         <li>
-          <Link href="/courses/2/lessons" className="block p-4 border rounded hover:bg-gray-50 dark:hover:bg-gray-800">
+          <Link
+            href="/courses"
+            style={{
+              textDecoration: 'none',
+              color: '#0070f3',
+              fontWeight: '600',
+              marginBottom: '10px'
+            }}
+          >
             Spanish to English
           </Link>
         </li>

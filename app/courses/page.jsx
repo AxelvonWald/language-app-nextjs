@@ -12,37 +12,45 @@ export default function CoursesPage() {
     async function fetchCourses() {
       const res = await fetch('/api/courses')
       const data = await res.json()
-
-      if (data) {
-        setCourses(data)
-      }
-
+      setCourses(data)
       setLoading(false)
     }
 
     fetchCourses()
   }, [])
 
-  if (loading) return <div>Loading courses...</div>
+  if (loading) return <p>Loading courses...</p>
 
   return (
-    <main className="p-4 max-w-3xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Select a Language Pair</h1>
+    <main style={{ padding: '20px', maxWidth: '800px', margin: 'auto' }}>
+      <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '20px' }}>
+        Select Your Course
+      </h1>
 
-      <ul className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         {courses.map((course) => (
-          <li key={course.id}>
-            <Link
-              href={`/courses/${course.id}/lessons`}
-              className="block p-4 border rounded-md hover:bg-gray-50 dark:hover:bg-gray-800"
-            >
-              <strong>{course.title}</strong>
-              <br />
-              <small className="text-gray-600">{course.description || 'Beginner level'}</small>
-            </Link>
-          </li>
+          <Link
+            key={course.id}
+            href={`/courses/${course.id}/lessons`}
+            style={{
+              textDecoration: 'none',
+              color: 'inherit',
+              border: '1px solid #ddd',
+              padding: '16px',
+              borderRadius: '8px',
+              backgroundColor: '#f9f9f9',
+              transition: 'background-color 0.2s'
+            }}
+          >
+            <h2 style={{ fontSize: '1.25rem', fontWeight: '600' }}>
+              {course.title}
+            </h2>
+            <p style={{ marginTop: '8px', fontSize: '0.9rem', color: '#666' }}>
+              {course.description || 'Beginner level'}
+            </p>
+          </Link>
         ))}
-      </ul>
+      </div>
     </main>
   )
 }

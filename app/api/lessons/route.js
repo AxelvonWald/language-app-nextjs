@@ -1,25 +1,27 @@
 // app/api/lessons/route.js
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { supabase } from '@/lib/supabase'
 
 export async function GET(request) {
-  const supabase = createRouteHandlerClient({ cookies });
-  const { searchParams } = new URL(request.url);
-  const course_id = searchParams.get('course_id');
+  const url = new URL(request.url)
+  const course_id = url.searchParams.get('course_id')
 
-  try {
-    const { data, error } = await supabase
-      .from('lessons')
-      .select('*')
-      .eq('course_id', course_id)
-      .order('order_index');
+  let query = supabase.from('lessons').select('id, title, description, order_index')
 
-    if (error) throw error;
-    return Response.json(data || []); // Always return an array
-  } catch (error) {
-    return Response.json(
-      { error: 'Failed to fetch lessons' },
-      { status: 500 }
-    );
+  if (course_id) {
+    query = query.eq('course_id', course_id)
   }
+
+  const { data, error } = await query.order('order_index')
+
+  if (error) {
+    return new Response(JSON.stringify({ error: 'Could not load lessons' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    })
+  }
+
+  return new Response(JSON.stringify(data), {
+    status: 200,
+    headers: { 'Content-Type': 'application/json' }
+  })
 }

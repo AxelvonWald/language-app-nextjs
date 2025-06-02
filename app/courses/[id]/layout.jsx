@@ -1,14 +1,14 @@
 // app/courses/[id]/layout.jsx
-import Link from 'next/link';
+export default async function CourseLayout({ children, params }) {
+  const { id } = await params
 
-export default function CourseLayout({ children, params }) {
   return (
-    <div className="course-layout">
-      <h2>Course: {params.id}</h2>
-      <nav>
-        <Link href={`/courses/${params.id}/lessons`}>Lessons</Link>
-      </nav>
-      <section>{children}</section>
+    <div style={{ padding: '20px' }}>
+      {/* Removed heading and nav */}
+      {/* No more "Course 1" or "Back to Course" */}
+      
+      {/* Render page-specific content only */}
+      {children}
     </div>
-  );
+  )
 }

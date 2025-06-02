@@ -1,39 +1,23 @@
 // components/ThemeToggle.js
-'use client'
+'use client';
 
-import { Moon, Sun } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useTheme } from 'next-themes';
+import { useEffect, useState } from 'react';
 
 export default function ThemeToggle() {
-  const [darkMode, setDarkMode] = useState(false)
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
-  // Load saved theme on startup
-  useEffect(() => {
-    const saved = localStorage.getItem('theme') || 'light'
-    setDarkMode(saved === 'dark')
-    document.documentElement.setAttribute('data-theme', saved)
-  }, [])
-
-  // Toggle between themes
-  const handleClick = () => {
-    const newMode = !darkMode
-    setDarkMode(newMode)
-    localStorage.setItem('theme', newMode ? 'dark' : 'light')
-    document.documentElement.setAttribute('data-theme', newMode ? 'dark' : 'light')
-  }
+  // Only render toggle once on client, to avoid mismatch
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
 
   return (
-    <button 
-      onClick={handleClick}
-      style={{
-        padding: '8px',
-        background: 'transparent',
-        border: '1px solid var(--border-color)',
-        borderRadius: '4px',
-        cursor: 'pointer'
-      }}
+    <button
+      onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+      className="p-2 rounded border"
     >
-      {darkMode ? <Moon size={18} /> : <Sun size={18} />}
+      {theme === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode'}
     </button>
-  )
+  );
 }
