@@ -2,21 +2,25 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { createClient } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase'
 import BackButton from '@/components/BackButton'
 import AudioPlayer from '@/components/AudioPlayer'
 
 export default function LessonPage({ params }) {
-  const supabase = createClient()
-  const { id: courseId, moduleId, lesson_id } = params
+  const courseId = params?.id
+  const moduleId = params?.moduleId
+  const lesson_id = params?.lesson_id
+
   const [lesson, setLesson] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
   useEffect(() => {
+    if (!courseId || !moduleId || !lesson_id) return
+
     const fetchLessonData = async () => {
       try {
-        // Fetch lesson basic info
+        // 1. Fetch lesson basic info
         const { data: lessonData, error: lessonError } = await supabase
           .from('lessons')
           .select('*')
@@ -26,17 +30,17 @@ export default function LessonPage({ params }) {
         if (lessonError) throw lessonError
         if (!lessonData) throw new Error('Lesson not found')
 
-        // Fetch sections separately
+        // 2. Fetch sections with sorting
         const { data: sectionsData, error: sectionsError } = await supabase
           .from('lesson_sections')
           .select('*')
           .eq('lesson_id', lesson_id)
+          .order('order_index', { ascending: true })
 
         if (sectionsError) throw sectionsError
 
-        // Fetch all related data in parallel
+        // 3. Fetch related data in parallel
         const [sentencesData, audioData] = await Promise.all([
-          // Get all sentences for these sections
           supabase
             .from('section_sentences')
             .select(`
@@ -48,7 +52,6 @@ export default function LessonPage({ params }) {
             `)
             .in('lesson_section_id', sectionsData.map(s => s.id)),
           
-          // Get all audio files
           supabase
             .from('audio_files')
             .select('*')
@@ -65,11 +68,9 @@ export default function LessonPage({ params }) {
             ...section,
             sentences: sentencesData.data
               .filter(ss => ss.lesson_section_id === section.id)
-              .sort((a, b) => a.order_index - b.order_index)
               .map(ss => ss.sentences),
             audio_files: audioData.data.find(a => a.lesson_section_id === section.id)
           }))
-          .sort((a, b) => a.order_index - b.order_index)
         }
 
         setLesson(combinedData)
@@ -81,7 +82,7 @@ export default function LessonPage({ params }) {
     }
 
     fetchLessonData()
-  }, [lesson_id, supabase])
+  }, [courseId, moduleId, lesson_id])
 
   if (loading) return (
     <main className="container">
@@ -133,7 +134,6 @@ export default function LessonPage({ params }) {
               )}
             </div>
 
-            {/* Audio Player */}
             {section.audio_files?.file_path && (
               <div className="my-4">
                 <AudioPlayer 
@@ -143,7 +143,6 @@ export default function LessonPage({ params }) {
               </div>
             )}
 
-            {/* Sentences Table */}
             {section.sentences?.length > 0 && (
               <table className="sentence-table w-full mt-4">
                 <thead>

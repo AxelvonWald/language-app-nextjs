@@ -1,7 +1,7 @@
 // app/login/page.jsx
 'use client'
 
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClientComponentClient } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 
 export default function Login() {

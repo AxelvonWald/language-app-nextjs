@@ -1,7 +1,7 @@
 // app/components/AuthButtons.client.jsx
 'use client'
 
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClientComponentClient } from '@/lib/supabase'
 
 export default function AuthButtons() {
   const supabase = createClientComponentClient()
