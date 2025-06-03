@@ -431,6 +431,15 @@ a {
 .border-border-color {
   border-color: var(--border-color);
 }
-.hover\:bg-hover-bg:hover {
+.hover:bg-hover-bg:hover {
   background: var(--hover-bg);
 }
+.sentence-card {
+  transition: background-color 0.2s ease;
+}
+
+/* For the section containers */
+.lesson-section {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
