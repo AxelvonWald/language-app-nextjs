@@ -65,9 +65,11 @@ export default function LessonPage({ params }) {
             ...section,
             sentences: sentencesData.data
               .filter(ss => ss.lesson_section_id === section.id)
+              .sort((a, b) => a.order_index - b.order_index)
               .map(ss => ss.sentences),
             audio_files: audioData.data.find(a => a.lesson_section_id === section.id)
           }))
+          .sort((a, b) => a.order_index - b.order_index)
         }
 
         setLesson(combinedData)
