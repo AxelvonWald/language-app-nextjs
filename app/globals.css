@@ -110,9 +110,9 @@ body {
 }
 
 .page-title {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 20px;
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
 }
 
 .lesson-card {
@@ -141,6 +141,8 @@ body {
   margin-top: 8px;
   font-size: 0.9rem;
   color: var(--text-color);
+  line-height: 1.6;
+  opacity: 0.9;
 }
 
 .container {
@@ -228,11 +230,13 @@ body {
   font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: 10px;
+  color: var(--text-color);
 }
 
 .section-instructions {
   margin-bottom: 16px;
   color: var(--text-color);
+  opacity: 0.8;
 }
 
 .audio-player {
@@ -418,4 +422,15 @@ a {
   color: var(--text-color);
   text-decoration: underline;
   text-decoration-color: var(--border-color); /* Uses your border color */
+}
+
+/* Cards */
+.bg-card-bg {
+  background: var(--card-bg);
+}
+.border-border-color {
+  border-color: var(--border-color);
+}
+.hover\:bg-hover-bg:hover {
+  background: var(--hover-bg);
 }

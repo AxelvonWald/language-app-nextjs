@@ -1,84 +1,183 @@
 // app/courses/[id]/modules/[moduleId]/lessons/[lesson_id]/page.jsx
 'use client'
 
-import React, { useEffect, useState } from 'react'
-import BackButton from '@/components/BackButton' // Changed from Link import
+import { useEffect, useState } from 'react'
+import { createClient } from '@/lib/supabase'
+import BackButton from '@/components/BackButton'
+import AudioPlayer from '@/components/AudioPlayer'
 
 export default function LessonPage({ params }) {
-  const { id, moduleId, lesson_id } = params
+  const supabase = createClient()
+  const { id: courseId, moduleId, lesson_id } = params
   const [lesson, setLesson] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
-    async function fetchLesson() {
-      const res = await fetch(`/api/lessons/${lesson_id}?course_id=${id}&module_id=${moduleId}`)
-      const data = await res.json()
+    const fetchLessonData = async () => {
+      try {
+        // Fetch lesson basic info
+        const { data: lessonData, error: lessonError } = await supabase
+          .from('lessons')
+          .select('*')
+          .eq('id', lesson_id)
+          .single()
 
-      if (!res.ok) {
-        setLesson(null)
-      } else {
-        setLesson(data)
+        if (lessonError) throw lessonError
+        if (!lessonData) throw new Error('Lesson not found')
+
+        // Fetch sections separately
+        const { data: sectionsData, error: sectionsError } = await supabase
+          .from('lesson_sections')
+          .select('*')
+          .eq('lesson_id', lesson_id)
+
+        if (sectionsError) throw sectionsError
+
+        // Fetch all related data in parallel
+        const [sentencesData, audioData] = await Promise.all([
+          // Get all sentences for these sections
+          supabase
+            .from('section_sentences')
+            .select(`
+              *,
+              sentences(
+                target_text,
+                native_text
+              )
+            `)
+            .in('lesson_section_id', sectionsData.map(s => s.id)),
+          
+          // Get all audio files
+          supabase
+            .from('audio_files')
+            .select('*')
+            .in('lesson_section_id', sectionsData.map(s => s.id))
+        ])
+
+        if (sentencesData.error) throw sentencesData.error
+        if (audioData.error) throw audioData.error
+
+        // Combine all data
+        const combinedData = {
+          ...lessonData,
+          lesson_sections: sectionsData.map(section => ({
+            ...section,
+            sentences: sentencesData.data
+              .filter(ss => ss.lesson_section_id === section.id)
+              .map(ss => ss.sentences),
+            audio_files: audioData.data.find(a => a.lesson_section_id === section.id)
+          }))
+        }
+
+        setLesson(combinedData)
+      } catch (err) {
+        setError(err.message)
+      } finally {
+        setLoading(false)
       }
-
-      setLoading(false)
     }
 
-    fetchLesson()
-  }, [id, moduleId, lesson_id])
+    fetchLessonData()
+  }, [lesson_id, supabase])
 
-  if (loading) return <div className="container">Loading lesson...</div>
-  if (!lesson) return <div className="container">Lesson not found</div>
+  if (loading) return (
+    <main className="container">
+      <p>Loading lesson...</p>
+    </main>
+  )
+
+  if (error || !lesson) return (
+    <main className="container">
+      <p className="text-red-500">{error || 'Lesson not found'}</p>
+    </main>
+  )
 
   return (
     <main className="container">
-      {/* Replaced Link with BackButton */}
       <BackButton 
-        href={`/courses/${id}/modules/${moduleId}/lessons`}
+        href={`/courses/${courseId}/modules/${moduleId}/lessons`}
+        className="mb-6"
       >
         Back to Lessons
       </BackButton>
 
-      {/* Rest of your code remains exactly the same */}
       <h1 className="page-title">{lesson.title}</h1>
-      {lesson.description && <p className="lesson-description">{lesson.description}</p>}
+      {lesson.description && (
+        <p className="lesson-description mb-8">{lesson.description}</p>
+      )}
 
-      {lesson.lesson_sections && lesson.lesson_sections.map(section => (
-        <section key={section.id} className="lesson-section">
-          <h2 className="section-title">{section.title}</h2>
-          {section.instructions && <p className="section-instructions">{section.instructions}</p>}
+      <div className="space-y-8">
+        {lesson.lesson_sections?.map((section) => (
+          <section 
+            key={section.id} 
+            className="lesson-section p-6 bg-card-bg rounded-lg border border-border-color"
+          >
+            <div className="flex justify-between items-start">
+              <div>
+                <h2 className="section-title text-xl font-semibold mb-2">
+                  {section.title}
+                </h2>
+                {section.instructions && (
+                  <p className="section-instructions text-gray-600 mb-4">
+                    {section.instructions}
+                  </p>
+                )}
+              </div>
+              {section.repetitions > 0 && (
+                <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
+                  {section.repetitions}x repeats
+                </span>
+              )}
+            </div>
 
-          {section.audio_file_id && (
-            <audio 
-              controls 
-              src={`/audio/${section.audio_file_id}.wav`} 
-              className="audio-player" 
-            />
-          )}
+            {/* Audio Player */}
+            {section.audio_files?.file_path && (
+              <div className="my-4">
+                <AudioPlayer 
+                  path={section.audio_files.file_path}
+                  label={`${section.title} Audio`}
+                />
+              </div>
+            )}
 
-          {section.sentences && section.sentences.length > 0 && (
-            <table className="sentence-table">
-              <thead>
-                <tr>
-                  {section.show_native && <th>Native</th>}
-                  {section.show_target && <th>Target</th>}
-                </tr>
-              </thead>
-              <tbody>
-                {section.sentences.map((sentence, i) => (
-                  <tr key={i}>
+            {/* Sentences Table */}
+            {section.sentences?.length > 0 && (
+              <table className="sentence-table w-full mt-4">
+                <thead>
+                  <tr className="border-b-2 border-border-color">
                     {section.show_native && (
-                      <td>{sentence.native_text}</td>
+                      <th className="text-left pb-2">Native</th>
                     )}
                     {section.show_target && (
-                      <td>{sentence.target_text}</td>
+                      <th className="text-left pb-2">Target</th>
                     )}
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </section>
-      ))}
+                </thead>
+                <tbody>
+                  {section.sentences.map((sentence, index) => (
+                    <tr 
+                      key={index} 
+                      className="border-b border-border-color hover:bg-hover-bg"
+                    >
+                      {section.show_native && (
+                        <td className="py-3 font-medium">
+                          {sentence.native_text}
+                        </td>
+                      )}
+                      {section.show_target && (
+                        <td className="py-3">
+                          {sentence.target_text}
+                        </td>
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </section>
+        ))}
+      </div>
     </main>
   )
 }
