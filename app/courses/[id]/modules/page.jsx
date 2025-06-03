@@ -1,33 +1,47 @@
+// app/courses/[id]/modules/page.jsx
 'use client'
 
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import ProgressTracker from '@/components/ProgressTracker'
 
 export default function ModulesPage({ params }) {
   const { id: courseId } = params
   const [modules, setModules] = useState([])
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState(null)
-
-  const { progress, loading: progressLoading } = ProgressTracker({ userId: user?.id })
+  const [completedLessons, setCompletedLessons] = useState({})
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true)
         
-        // Get user session using your existing client
+        // 1. Get user session
         const { data: { user } } = await supabase.auth.getUser()
         setUser(user)
 
-        // Fetch modules
+        // 2. Fetch modules
         const { data: modulesData } = await supabase
           .from('modules')
           .select('*')
           .eq('course_id', courseId)
           .order('order_index', { ascending: true })
+
+        // 3. Fetch progress if user exists
+        if (user) {
+          const { data } = await supabase
+            .from('user_lesson_progress')
+            .select('lesson_id, lessons(module_id)')
+            .eq('user_id', user.id)
+          
+          const moduleProgress = {}
+          data?.forEach(item => {
+            const moduleId = item.lessons.module_id
+            moduleProgress[moduleId] = (moduleProgress[moduleId] || 0) + 1
+          })
+          setCompletedLessons(moduleProgress)
+        }
 
         setModules(modulesData || [])
       } catch (error) {
@@ -39,6 +53,15 @@ export default function ModulesPage({ params }) {
 
     fetchData()
   }, [courseId])
+
+  const isModuleLocked = (module) => {
+    // First module is never locked
+    if (module.order_index === 1) return false
+    
+    // Module is locked if not enough lessons completed in previous module
+    const prevModuleCompleted = completedLessons[module.order_index - 1] || 0
+    return prevModuleCompleted < (module.required_lessons_to_unlock || 3)
+  }
 
   if (loading) return (
     <main className="container">
@@ -60,102 +83,43 @@ export default function ModulesPage({ params }) {
 
       <h1 className="page-title">Course Modules</h1>
 
-      <div className="modules-grid">
+      <div className="course-list">
         {modules.map((module) => {
-          const completedLessons = progress[module.id] || 0
-          const isLocked = module.order_index > 1 && 
-                          (!progress[module.id - 1] || 
-                           progress[module.id - 1] < (module.required_lessons_to_unlock || 3))
-
+          const locked = isModuleLocked(module)
+          const completedCount = completedLessons[module.id] || 0
+          
           return (
             <div 
               key={module.id} 
-              className={`module-box ${isLocked ? 'locked' : ''} ${completedLessons ? 'has-progress' : ''}`}
+              className={`course-card ${locked ? 'locked' : ''}`}
             >
-              {isLocked ? (
-                <div className="module-locked">
-                  <div className="lock-icon">🔒</div>
-                  <p>Complete {module.required_lessons_to_unlock || 3} lessons in previous module to unlock</p>
-                </div>
-              ) : (
-                <Link
-                  href={`/courses/${courseId}/modules/${module.id}/lessons`}
-                  className="module-content"
-                >
-                  <h2>{module.title}</h2>
-                  <p>{module.description || 'No description available'}</p>
-                  
-                  {completedLessons > 0 && (
-                    <div className="progress-bar">
-                      <div 
-                        className="progress-fill" 
-                        style={{ width: `${(completedLessons / (module.lesson_count || 5)) * 100}%` }}
-                      />
-                      <span className="progress-text">
-                        {completedLessons} of {module.lesson_count || 5} lessons
-                      </span>
-                    </div>
-                  )}
-                </Link>
+              {locked && (
+                <div className="lock-icon">🔒</div>
+              )}
+              <Link
+                href={locked ? '#' : `/courses/${courseId}/modules/${module.id}/lessons`}
+                className="course-content"
+              >
+                <h2 className="course-title">{module.title}</h2>
+                <p className="course-description">
+                  {module.description || 'No description available'}
+                </p>
+                
+                {completedCount > 0 && (
+                  <div className="progress-info">
+                    Completed {completedCount} of {module.lesson_count || 'all'} lessons
+                  </div>
+                )}
+              </Link>
+              {locked && (
+                <p className="lock-message">
+                  Complete {module.required_lessons_to_unlock || 3} lessons in previous module
+                </p>
               )}
             </div>
           )
         })}
       </div>
-
-      <style jsx>{`
-        .modules-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-          gap: 1.5rem;
-          margin-top: 2rem;
-        }
-        .module-box {
-          border: 1px solid #e2e8f0;
-          border-radius: 0.5rem;
-          padding: 1.5rem;
-          transition: all 0.2s;
-          position: relative;
-          overflow: hidden;
-        }
-        .module-box.locked {
-          background-color: #f8fafc;
-          color: #64748b;
-        }
-        .module-box.has-progress {
-          border-left: 4px solid #3b82f6;
-        }
-        .module-content {
-          display: flex;
-          flex-direction: column;
-          height: 100%;
-        }
-        .module-locked {
-          text-align: center;
-          padding: 1rem;
-        }
-        .lock-icon {
-          font-size: 2rem;
-          margin-bottom: 0.5rem;
-        }
-        .progress-bar {
-          margin-top: 1rem;
-          background-color: #e2e8f0;
-          border-radius: 9999px;
-          height: 0.5rem;
-          overflow: hidden;
-        }
-        .progress-fill {
-          background-color: #3b82f6;
-          height: 100%;
-        }
-        .progress-text {
-          display: block;
-          margin-top: 0.5rem;
-          font-size: 0.875rem;
-          color: #64748b;
-        }
-      `}</style>
     </main>
   )
 }

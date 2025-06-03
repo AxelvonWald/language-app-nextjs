@@ -1,40 +1,50 @@
 // app/courses/[id]/modules/[moduleId]/lessons/[lesson_id]/page.jsx
-"use client";
+'use client'
 
-import { supabase } from "@/lib/supabase";
-import { useEffect, useState } from "react";
-import BackButton from "@/components/BackButton";
-import AudioPlayer from "@/components/AudioPlayer";
-import LessonLock from "@/components/LessonLock";
+import { supabase } from '@/lib/supabase'
+import { useEffect, useState } from 'react'
+import BackButton from '@/components/BackButton'
+import AudioPlayer from '@/components/AudioPlayer'
+import LessonLock from '@/components/LessonLock'
 
 export default function LessonPage({ params }) {
-  const { id: courseId, moduleId, lesson_id } = params;
-  const [lesson, setLesson] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [user, setUser] = useState(null);
+  const { id: courseId, moduleId, lesson_id } = params
+  const [lesson, setLesson] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [user, setUser] = useState(null)
+  const [isCompleted, setIsCompleted] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true);
-        setError(null);
-
+        setLoading(true)
+        setError(null)
+        
         // 1. Get user session
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
-        setUser(user);
+        const { data: { user } } = await supabase.auth.getUser()
+        setUser(user)
 
-        // 2. Fetch lesson with separate queries for better control
+        // 2. Check if lesson is already completed
+        if (user) {
+          const { data: progress } = await supabase
+            .from('user_lesson_progress')
+            .select('completed_at')
+            .eq('user_id', user.id)
+            .eq('lesson_id', lesson_id)
+            .single()
+          setIsCompleted(!!progress?.completed_at)
+        }
+
+        // 3. Fetch lesson data
         const { data: lessonData, error: lessonError } = await supabase
-          .from("lessons")
-          .select("*")
-          .eq("id", lesson_id)
-          .single();
+          .from('lessons')
+          .select('*')
+          .eq('id', lesson_id)
+          .single()
 
-        if (lessonError) throw lessonError;
-        if (!lessonData) throw new Error("Lesson not found");
+        if (lessonError) throw lessonError
+        if (!lessonData) throw new Error('Lesson not found')
 
         // 3. Fetch sections separately
         const { data: sections, error: sectionsError } = await supabase
@@ -73,57 +83,76 @@ export default function LessonPage({ params }) {
           ...lessonData,
           sections: sectionData,
         });
-      } catch (err) {
-        console.error("Failed to load lesson:", err);
-        setError(err.message);
+   } catch (err) {
+        console.error('Failed to load lesson:', err)
+        setError(err.message)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchData();
-  }, [courseId, moduleId, lesson_id]);
+    fetchData()
+  }, [courseId, moduleId, lesson_id])
 
-  if (loading)
-    return (
-      <main className="container">
-        <p>Loading lesson...</p>
-      </main>
-    );
+  const markLessonComplete = async () => {
+    try {
+      const { error } = await supabase
+        .from('user_lesson_progress')
+        .upsert({
+          user_id: user?.id,
+          lesson_id: lesson_id,
+          completed_at: new Date().toISOString(),
+          status: 'completed'
+        }, {
+          onConflict: 'user_id,lesson_id'
+        })
 
-  if (error)
-    return (
-      <main className="container">
-        <BackButton
-          href={`/courses/${courseId}/modules/${moduleId}/lessons`}
-          className="mb-6"
-        >
-          Back to Lessons
-        </BackButton>
-        <div className="text-red-500 p-4 border border-red-200 bg-red-50 rounded">
-          Error: {error}
-        </div>
-      </main>
-    );
+      if (error) throw error
+      setIsCompleted(true)
+      
+    } catch (error) {
+      console.error('Completion error:', error)
+    }
+  }
 
-  if (!lesson)
-    return (
-      <main className="container">
-        <BackButton
-          href={`/courses/${courseId}/modules/${moduleId}/lessons`}
-          className="mb-6"
-        >
-          Back to Lessons
-        </BackButton>
-        <p>Lesson not found</p>
-      </main>
-    );
+  if (loading) return (
+    <main className="container">
+      <p>Loading lesson...</p>
+    </main>
+  )
+
+  if (error) return (
+    <main className="container">
+      <BackButton 
+        href={`/courses/${courseId}/modules/${moduleId}/lessons`}
+        className="back-link"
+      >
+        Back to Lessons
+      </BackButton>
+      <div className="error-message">
+        <p>Lesson Failed to Load</p>
+        <p>{error}</p>
+      </div>
+    </main>
+  )
+
+  if (!lesson) return (
+    <main className="container">
+      <BackButton 
+        href={`/courses/${courseId}/modules/${moduleId}/lessons`}
+        className="back-link"
+      >
+        Back to Lessons
+      </BackButton>
+      <p>Lesson not found</p>
+    </main>
+  )
 
   return (
     <main className="container">
-      <BackButton
+      <BackButton 
         href={`/courses/${courseId}/modules/${moduleId}/lessons`}
-        className="mb-6"
+        className="back-link"
       >
         Back to Lessons
       </BackButton>
@@ -135,56 +164,58 @@ export default function LessonPage({ params }) {
         userId={user?.id}
       />
 
-      <h1 className="text-3xl font-bold mb-2">{lesson.title}</h1>
-      {lesson.description && (
-        <p className="text-gray-600 mb-8">{lesson.description}</p>
-      )}
+      <div className="lesson-header">
+        <h1 className="lesson-title">{lesson.title}</h1>
+        {lesson.description && (
+          <p className="lesson-description">{lesson.description}</p>
+        )}
+        {isCompleted && (
+          <div className="completion-badge">
+            ✓ Completed
+          </div>
+        )}
+      </div>
 
-      <div className="space-y-8">
+      <div className="lesson-sections">
         {lesson.sections.map((section) => (
-          <section
-            key={section.id}
-            className="p-6 bg-white rounded-lg border border-gray-200"
-          >
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <h2 className="text-xl font-semibold">{section.title}</h2>
-                {section.instructions && (
-                  <p className="text-gray-600 mt-1">{section.instructions}</p>
-                )}
-              </div>
+          <section key={section.id} className="lesson-section">
+            <div className="section-header">
+              <h2 className="section-title">{section.title}</h2>
+              {section.instructions && (
+                <p className="section-instructions">{section.instructions}</p>
+              )}
               {section.repetitions > 0 && (
-                <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
-                  Repeat {section.repetitions}x
+                <span className="repetition-badge">
+                  {section.repetitions}x repeats
                 </span>
               )}
             </div>
 
             {section.audioPath && (
-              <AudioPlayer
+              <AudioPlayer 
                 path={section.audioPath}
                 label={`${section.title} Audio`}
+                className="section-audio"
               />
             )}
 
             {section.sentences.length > 0 && (
-              <table className="w-full mt-6 border-collapse">
+              <table className="sentence-table">
                 <thead>
-                  <tr className="border-b-2 border-gray-200">
-                    <th className="text-left pb-3 font-semibold">Native</th>
-                    <th className="text-left pb-3 font-semibold">Target</th>
+                  <tr>
+                    <th>Native</th>
+                    <th>Target</th>
                   </tr>
                 </thead>
                 <tbody>
                   {section.sentences.map((sentence) => (
-                    <tr
-                      key={sentence.id}
-                      className="border-b border-gray-200 hover:bg-gray-50"
-                    >
-                      <td className="py-4 font-medium">
+                    <tr key={sentence.id}>
+                      <td className="sentence-native">
                         {sentence.native_text}
                       </td>
-                      <td className="py-4">{sentence.target_text}</td>
+                      <td className="sentence-target">
+                        {sentence.target_text}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -193,6 +224,15 @@ export default function LessonPage({ params }) {
           </section>
         ))}
       </div>
+
+      {!isCompleted && user && (
+        <button
+          onClick={markLessonComplete}
+          className="complete-button"
+        >
+          Mark Lesson Complete
+        </button>
+      )}
     </main>
-  );
+  )
 }

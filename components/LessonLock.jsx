@@ -1,62 +1,101 @@
+// components/LessonLock.jsx
 'use client'
+
 import { supabase } from '@/lib/supabase'
 import { useEffect, useState } from 'react'
 
-export default function LessonLock({ lessonId, moduleId, userId }) {
-  const [isLocked, setIsLocked] = useState(false) // Default to not locked
-  const [loading, setLoading] = useState(false) // Start as not loading
+export default function LessonLock({ courseId, moduleId, lessonId, userId }) {
+  const [isLocked, setIsLocked] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [message, setMessage] = useState('')
 
   useEffect(() => {
-    if (!userId) return; // No user = no lock check
-    
     const checkAccess = async () => {
-      setLoading(true);
       try {
+        setLoading(true)
+        
         // Get current lesson's order index
-        const { data: currentLesson } = await supabase
+        const { data: currentLesson, error: lessonError } = await supabase
           .from('lessons')
-          .select('order_index')
+          .select('order_index, module_id')
           .eq('id', lessonId)
-          .single();
+          .single()
 
-        // First lesson is always unlocked
-        if (currentLesson?.order_index === 1) {
-          setIsLocked(false);
-          return;
+        if (lessonError) throw lessonError
+        if (!currentLesson) {
+          setIsLocked(false)
+          return
         }
 
-        // Check previous lesson completion
-        const { data: progress } = await supabase
+        // First lesson of first module is always unlocked
+        if (currentLesson.order_index === 1) {
+          const { data: module } = await supabase
+            .from('modules')
+            .select('order_index')
+            .eq('id', currentLesson.module_id)
+            .single()
+
+          if (module?.order_index === 1) {
+            setIsLocked(false)
+            return
+          }
+        }
+
+        // Find previous lesson in sequence
+        const { data: previousLesson, error: prevError } = await supabase
+          .from('lessons')
+          .select('id, order_index')
+          .eq('module_id', moduleId)
+          .lt('order_index', currentLesson.order_index)
+          .order('order_index', { ascending: false })
+          .limit(1)
+          .single()
+
+        if (prevError) throw prevError
+
+        if (!previousLesson) {
+          setIsLocked(false)
+          return
+        }
+
+        // Check if previous lesson was completed
+        const { data: progress, error: progressError } = await supabase
           .from('user_lesson_progress')
           .select('completed_at')
           .eq('user_id', userId)
-          .eq('lesson_id', lessonId - 1) // Assuming sequential IDs
-          .single();
+          .eq('lesson_id', previousLesson.id)
+          .single()
 
-        setIsLocked(!progress?.completed_at);
+        if (progressError) throw progressError
+
+        setIsLocked(!progress?.completed_at)
+        setMessage(progress?.completed_at ? '' : `Complete Lesson ${previousLesson.order_index} to unlock`)
+
       } catch (error) {
-        console.error('Access check failed:', error);
-        setIsLocked(false); // Fail open
+        console.error('LessonLock error:', error)
+        setIsLocked(false) // Fail open - don't block access on error
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    checkAccess();
-  }, [lessonId, moduleId, userId]);
+    if (userId) checkAccess()
+  }, [courseId, moduleId, lessonId, userId])
 
-  if (loading) return null; // Don't show loading state
+  if (loading) return null // Don't show loading state
+
   if (isLocked) return (
-    <div className="p-4 mb-6 bg-yellow-50 border-l-4 border-yellow-400">
+    <div className="locked-lesson-notice p-4 mb-6 bg-yellow-50 border-l-4 border-yellow-400">
       <div className="flex">
         <div className="flex-shrink-0">🔒</div>
         <div className="ml-3">
           <p className="text-sm text-yellow-700">
-            Complete the previous lesson to unlock this content
+            {message || 'Complete the previous lesson to unlock this content'}
           </p>
         </div>
       </div>
     </div>
-  );
-  return null;
+  )
+
+  return null
 }
